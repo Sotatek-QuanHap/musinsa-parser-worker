@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: musinsa-download-worker
+    networks:
+      - musinsa_network
+
+networks:
+  musinsa_network: 
+    name: musinsa_network
+    external: true
+

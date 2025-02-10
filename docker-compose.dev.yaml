@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: musinsa-download-worker
+    networks:
+      - musinsa_network
+    volumes:
+      - ./:/home/node/app:rw
+
+networks:
+  musinsa_network: 
+    name: musinsa_network
+    external: true
+
