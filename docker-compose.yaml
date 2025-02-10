@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: musinsa-download-worker
+    container_name: musinsa-parser-worker
     networks:
       - musinsa_network
 
