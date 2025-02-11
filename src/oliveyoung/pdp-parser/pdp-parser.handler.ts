@@ -6,6 +6,7 @@ import { PDPParserService } from './pdp-parser.service';
 import { ConfigService } from '@nestjs/config';
 import { SandyLogger } from 'src/utils/sandy.logger';
 import KafkaProducerService from 'src/kafka/kafka.producer';
+import { KafkaTopics, PDPParserConfigs } from '../constants';
 
 @Injectable()
 export class PDPParserHandler extends BaseKafkaHandler {
@@ -14,16 +15,7 @@ export class PDPParserHandler extends BaseKafkaHandler {
     private readonly parserService: PDPParserService,
     private readonly kafkaProducer: KafkaProducerService,
   ) {
-    super(
-      configService,
-      configService.get(
-        'app.oliveYoung.pdpParser.name',
-        'olive_young_pdp_parser',
-        {
-          infer: true,
-        },
-      ),
-    );
+    super(configService, PDPParserConfigs.name);
     this.params = arguments;
   }
 
@@ -34,38 +26,24 @@ export class PDPParserHandler extends BaseKafkaHandler {
   public async process(data: any, logger: SandyLogger): Promise<void> {
     const parsedData = await this.parserService.parse(data.html);
 
-    // Send to Kafka for parsing
+    // Send parsed data to Kafka
     await this.kafkaProducer.send({
-      topic: this.configService.get<string>(
-        'app.oliveYoung.topics.pdpResult',
-        'olive-young.pdp.result',
-        { infer: true },
-      ),
+      topic: KafkaTopics.pdpResult,
       message: JSON.stringify(parsedData),
     });
   }
 
   getTopicNames(): string {
-    return this.configService.get(
-      'app.oliveYoung.topics.pdpParserRequest',
-      'olive-young.pdp-parser.request',
-      { infer: true },
-    );
+    return KafkaTopics.pdpParserRequest;
   }
 
   getGroupId(): string {
-    return this.configService.get<string>(
-      'app.oliveYoung.pdpParser.groupId',
-      'olive-young-pdp-parser-group',
-      { infer: true },
-    );
+    return PDPParserConfigs.groupId;
   }
 
   getCount(): number {
-    return this.configService.get(
-      'app.oliveYoung.pdpParser.numberOfHandlers',
-      0,
-      { infer: true },
-    );
+    return this.configService.get('app.oliveYoung.numberOfPdpParsers', 0, {
+      infer: true,
+    });
   }
 }

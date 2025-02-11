@@ -33,6 +33,10 @@ export class PDPParserService {
         type: 'css_selector',
         selector: '.prd_detail_box.renew .right_area > div:nth-child(2)',
       },
+      stock: {
+        type: 'input',
+        selector: '#avalInvQty',
+      },
     };
     return Promise.resolve(fakeConfigs);
   }
