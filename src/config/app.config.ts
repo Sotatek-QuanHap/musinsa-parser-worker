@@ -55,6 +55,24 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsOptional()
   KAFKA_CLIENT: string;
+
+  @IsInt()
+  OLIVE_YOUNG_PDP_PARSER_NUMBER: number;
+
+  @IsString()
+  OLIVE_YOUNG_KAFKA_PDP_CRAWLER_REQUEST_TOPIC: string;
+
+  @IsString()
+  OLIVE_YOUNG_KAFKA_PDP_PARSER_REQUEST_TOPIC: string;
+
+  @IsString()
+  OLIVE_YOUNG_KAFKA_PDP_RESULT_TOPIC: string;
+
+  @IsString()
+  OLIVE_YOUNG_CRAWLER_PDP_PARSER_NAME: string;
+
+  @IsString()
+  OLIVE_YOUNG_PDP_PARSER_GROUP_ID: string;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -77,6 +95,27 @@ export default registerAs<AppConfig>('app', () => {
     kafka: {
       brokers: process.env.KAFKA_BROKERS || 'localhost:29092',
       client: process.env.KAFKA_CLIENT || 'musinsa-client',
+    },
+    oliveYoung: {
+      pdpPaser: {
+        name:
+          process.env.OLIVE_YOUNG_PDP_PARSER_NAME || 'olive_young_pdp_parser',
+        groupId:
+          process.env.OLIVE_YOUNG_PDP_PARSER_GROUP_ID ||
+          'olive-young-pdp-parser-group',
+        numberOfHandlers: process.env.OLIVE_YOUNG_PDP_PARSER_NUMBER || 0,
+      },
+      topics: {
+        pdpCrawlerRequest:
+          process.env.OLIVE_YOUNG_KAFKA_PDP_CRAWLER_REQUEST_TOPIC ||
+          'olive-young.pdp-crawler.request',
+        pdpParserRequest:
+          process.env.OLIVE_YOUNG_KAFKA_PDP_PARSER_REQUEST_TOPIC ||
+          'olive-young.pdp-parser.request',
+        pdpResult:
+          process.env.OLIVE_YOUNG_KAFKA_PDP_RESULT_TOPIC ||
+          'olive-young.pdp-parser.request',
+      },
     },
   };
 });

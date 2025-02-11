@@ -23,6 +23,6 @@ export class ConsumerTestHandler extends BaseKafkaHandler {
   }
 
   public getCount() {
-      return 1
+    return 1;
   }
 }

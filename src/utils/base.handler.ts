@@ -14,12 +14,12 @@ export abstract class BaseKafkaHandler {
     ...params: any[]
   ) {
     this.name = name;
+    this.params = params;
 
     this.fromBeginning =
       this.configService.get(`from_begin_${this.name}`, '1', {
         infer: true,
       }) == '1';
-    this.params = params;
   }
 
   public clone() {
@@ -30,7 +30,7 @@ export abstract class BaseKafkaHandler {
   public async setup() {}
 
   public getCount() {
-    const key = `number_of_${this.name}`;
+    const key = `app.number_of_${this.name}`;
     const processCount = this.configService.get<number>(key, 0, {
       infer: true,
     });
