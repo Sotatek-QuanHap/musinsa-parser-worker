@@ -1,7 +1,7 @@
 /* eslint-disable prefer-rest-params */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import { BaseKafkaHandler } from '../utils/base.handler';
+import { BaseKafkaHandler } from 'src/utils/base.handler';
 import { PDPParserService } from './pdp-parser.service';
 import { ConfigService } from '@nestjs/config';
 import { SandyLogger } from 'src/utils/sandy.logger';
@@ -62,7 +62,6 @@ export class PDPParserHandler extends BaseKafkaHandler {
   }
 
   getCount(): number {
-    return 1;
     return this.configService.get(
       'app.oliveYoung.pdpParser.numberOfHandlers',
       0,

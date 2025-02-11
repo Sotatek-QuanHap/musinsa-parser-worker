@@ -97,7 +97,7 @@ export default registerAs<AppConfig>('app', () => {
       client: process.env.KAFKA_CLIENT || 'musinsa-client',
     },
     oliveYoung: {
-      pdpPaser: {
+      pdpParser: {
         name:
           process.env.OLIVE_YOUNG_PDP_PARSER_NAME || 'olive_young_pdp_parser',
         groupId:
