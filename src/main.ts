@@ -7,5 +7,6 @@ import { AllConfigType } from './config/config.type';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.get(ConfigService<AllConfigType>);
+  await app.init();
 }
 void bootstrap();

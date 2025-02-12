@@ -1,3 +1,10 @@
+export type SelectorConfig = {
+  type: 'css_selector' | 'xpath' | 'meta' | 'input';
+  selector: string;
+};
+
+export type ParsingConfigurations = Record<string, SelectorConfig>;
+
 export const PDPParserConfigs = {
   name: 'olive-young.pdp-parser',
   groupId: 'olive-young-pdp-parser-group',
@@ -17,4 +24,7 @@ export const KafkaTopics = {
 
   pdpParserRequest: 'olive-young.pdp-parser.request',
   pdpResult: 'olive-young.pdp.result',
+
+  pdpConfigRequest: 'olive-young.pdp-config.request',
+  pdpConfigUpdate: 'olive-young.pdp-config.update',
 };

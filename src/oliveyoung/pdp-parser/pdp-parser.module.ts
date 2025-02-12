@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { KafkaConsumerService } from 'src/kafka/kafka.consumer';
 import { KafkaModule } from 'src/kafka/kafka.module';
 import { PDPParserHandler } from './pdp-parser.handler';
@@ -10,11 +10,14 @@ import { PDPParserService } from './pdp-parser.service';
   providers: [PDPParserHandler, PDPParserService],
   imports: [ConfigModule, KafkaModule],
 })
-export class PDPParserModule {
+export class PDPParserModule implements OnModuleInit {
   constructor(
-    private kafkaConsumerService: KafkaConsumerService,
-    pdpParserHandler: PDPParserHandler,
-  ) {
-    void this.kafkaConsumerService.listen(pdpParserHandler);
+    private readonly kafkaConsumerService: KafkaConsumerService,
+    private readonly pdpParserHandler: PDPParserHandler, // Let NestJS inject this
+  ) {}
+
+  onModuleInit() {
+    // Use the PDPParserHandler only after the module is fully initialized
+    void this.kafkaConsumerService.listen(this.pdpParserHandler);
   }
 }
