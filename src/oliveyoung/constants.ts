@@ -16,6 +16,11 @@ export const CategoryParserConfigs = {
   groupId: 'olive-young-category-parser-group',
 };
 
+export const PLPParserConfigs = {
+  name: 'olive-young.plp-parser',
+  groupId: 'olive-young-plp-parser-group',
+};
+
 export const KafkaTopics = {
   categoryParserRequest: 'olive-young.category-parser.request',
   categoryResult: 'olive-young.category.result',
