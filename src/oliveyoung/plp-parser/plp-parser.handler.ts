@@ -27,7 +27,10 @@ export class PLPParserHandler extends BaseKafkaHandler {
     // Send parsed data to Kafka
     await this.kafkaProducer.send({
       topic: KafkaTopics.plpResult,
-      message: JSON.stringify(parsedData),
+      message: JSON.stringify({
+        categoryId: data.categoryId,
+        productList: parsedData,
+      }),
     });
   }
 
