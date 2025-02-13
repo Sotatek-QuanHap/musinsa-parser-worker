@@ -24,7 +24,4 @@ export const KafkaTopics = {
 
   pdpParserRequest: 'olive-young.pdp-parser.request',
   pdpResult: 'olive-young.pdp.result',
-
-  pdpConfigRequest: 'olive-young.pdp-config.request',
-  pdpConfigUpdate: 'olive-young.pdp-config.update',
 };

@@ -7,6 +7,11 @@ import KafkaProducerService from 'src/kafka/kafka.producer';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { TimeUtils } from 'src/utils/time.utils';
+import {
+  ConfigSynchronizerConfigs,
+  ConfigSynchronizerUpdatePayload,
+  KafkaTopics,
+} from './constants';
 
 @Injectable()
 export class ConfigSynchronizerHandler
@@ -20,7 +25,7 @@ export class ConfigSynchronizerHandler
     private readonly kafkaProducer: KafkaProducerService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
-    super(configService, 'config-synchronizer');
+    super(configService, ConfigSynchronizerConfigs.name);
     this.params = arguments;
   }
 
@@ -30,12 +35,16 @@ export class ConfigSynchronizerHandler
 
   async requestConfiguration() {
     if (!ConfigSynchronizerHandler.isConfigReady) {
+      // TODO: store the message format in a config file
       await this.kafkaProducer.send({
-        topic: 'crawlerConfigRequest',
-        message: JSON.stringify({ service: 'PDPParser', request: 'config' }),
+        topic: KafkaTopics.configRequest,
+        message: JSON.stringify({
+          service: 'OliveYoung.Parser',
+          request: 'config',
+        }),
       });
       console.warn(
-        'PDPParserHandler: No configuration found. Requested configuration from Kafka.',
+        'ConfigSynchronizerHandler: No configuration found. Sent configuration request to Kafka.',
       );
     }
   }
@@ -44,7 +53,10 @@ export class ConfigSynchronizerHandler
     return Promise.resolve();
   }
 
-  public async process(data: any, logger: SandyLogger): Promise<void> {
+  public async process(
+    data: ConfigSynchronizerUpdatePayload,
+    logger: SandyLogger,
+  ): Promise<void> {
     logger.log('ConfigSynchronizer: Updating config.');
     ConfigSynchronizerHandler.isConfigReady = true;
     await this.cacheManager.set('configurations', data.value);
@@ -58,11 +70,11 @@ export class ConfigSynchronizerHandler
   }
 
   getTopicNames(): string {
-    return `olive-young.pdp-config.update`;
+    return KafkaTopics.configUpdate;
   }
 
   getGroupId(): string {
-    return 'groupId';
+    return ConfigSynchronizerConfigs.groupId;
   }
 
   getCount(): number {
