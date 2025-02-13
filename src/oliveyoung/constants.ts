@@ -1,6 +1,7 @@
 export type SelectorConfig = {
-  type: 'css_selector' | 'xpath' | 'meta' | 'input';
+  type: 'css_selector' | 'xpath' | 'meta' | 'input' | 'attr';
   selector: string;
+  attr?: string;
 };
 
 export type ParsingConfigurations = Record<string, SelectorConfig>;
