@@ -17,11 +17,16 @@ export class PDPParserService {
       data.extraInfoHtml,
       configurations,
     );
+    const parsedOptions = this.parseOptions(
+      data.optionsInfoHtml,
+      configurations,
+    );
 
     return {
       ...parsedProduct,
       url: data.url,
       extraInfo: parsedExtraInfo,
+      options: parsedOptions,
     };
   }
 
@@ -68,5 +73,36 @@ export class PDPParserService {
     });
 
     return extraData;
+  }
+
+  parseOptions(optionsHtml: string, configurations: ParsingConfigurations) {
+    const config = configurations['options'];
+    if (!config) return [];
+
+    const $ = cheerio.load(optionsHtml);
+    const options: any[] = [];
+
+    $(config.selector).each((_, el) => {
+      // Find the .option_value element
+      const optionValueEl = $(el).find('.option_value');
+
+      const price = $(el).find('.option_price .tx_num').text().trim();
+
+      // Remove the nested .option_price before extracting text
+      optionValueEl.find('.option_price').remove();
+
+      // Extract and clean the option name
+      let option = optionValueEl
+        .text()
+        .replace(/\(품절\)/, '')
+        .trim();
+      option = option.replace(/[\t\n]/g, '');
+
+      if (option) {
+        options.push({ option, price });
+      }
+    });
+
+    return options;
   }
 }
