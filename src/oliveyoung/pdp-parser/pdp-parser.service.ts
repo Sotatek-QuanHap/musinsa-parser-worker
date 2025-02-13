@@ -20,6 +20,7 @@ export class PDPParserService {
 
     return {
       ...parsedProduct,
+      url: data.url,
       extraInfo: parsedExtraInfo,
     };
   }
