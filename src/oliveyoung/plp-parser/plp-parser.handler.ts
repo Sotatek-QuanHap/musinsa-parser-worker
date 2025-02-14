@@ -1,10 +1,13 @@
 /* eslint-disable prefer-rest-params */
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { BaseKafkaHandler } from 'src/utils/base.handler';
 import { PLPParserService } from './plp-parser.service';
 import { ConfigService } from '@nestjs/config';
 import KafkaProducerService from 'src/kafka/kafka.producer';
 import { KafkaTopics, PLPParserConfigs } from '../constants';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CachedConfigurations } from '../../config-synchronizer/constants';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PLPParserHandler extends BaseKafkaHandler {
@@ -12,6 +15,7 @@ export class PLPParserHandler extends BaseKafkaHandler {
     configService: ConfigService,
     private readonly parserService: PLPParserService,
     private readonly kafkaProducer: KafkaProducerService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super(configService, PLPParserConfigs.name);
     this.params = arguments;
@@ -22,7 +26,11 @@ export class PLPParserHandler extends BaseKafkaHandler {
   }
 
   public async process(data: any): Promise<void> {
-    const parsedData = await this.parserService.parse(data.html);
+    const allConfigurations = (await this.cacheManager.get(
+      'configurations',
+    )) as CachedConfigurations;
+    const plpConfigs = allConfigurations.PLPParser;
+    const parsedData = this.parserService.parse(data.html, plpConfigs);
 
     // Send parsed data to Kafka
     await this.kafkaProducer.send({

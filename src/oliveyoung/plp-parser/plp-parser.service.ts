@@ -15,19 +15,6 @@ export class PLPParserService {
 
   constructor() {}
 
-  private async getParsingConfigurations(): Promise<ParsingConfigurations> {
-    // TODO: need to sync config with Kafka
-    const fakeConfigs: ParsingConfigurations = {
-      productId: {
-        type: 'attr',
-        selector: '.prd_info a.prd_thumb',
-        attr: 'data-ref-goodsno',
-      },
-      url: { type: 'attr', selector: '.prd_info a.prd_thumb', attr: 'href' },
-    };
-    return Promise.resolve(fakeConfigs);
-  }
-
   private extractFieldValue(
     $: cheerio.CheerioAPI,
     config: SelectorConfig,
@@ -49,15 +36,16 @@ export class PLPParserService {
     }
   }
 
-  async parse(productHtml: string): Promise<Array<Record<string, string>>> {
+  parse(
+    productHtml: string,
+    configurations: ParsingConfigurations,
+  ): Array<Record<string, string>> {
     try {
       const $ = cheerio.load(productHtml);
       const productData: Array<{
         productId?: string;
         productUrl?: string;
       }> = [];
-      const configurations: ParsingConfigurations =
-        await this.getParsingConfigurations();
 
       // Loop through each configuration entry and extract its corresponding value.
       $('.cate_prd_list.gtm_cate_list li').each((index, element) => {
